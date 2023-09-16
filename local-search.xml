@@ -4,6 +4,25 @@
   
   
   <entry>
+    <title>瀑布流</title>
+    <link href="/limoam/post/140ab620.html"/>
+    <url>/limoam/post/140ab620.html</url>
+    
+    <content type="html"><![CDATA[<h1 id="瀑布流"><a href="#瀑布流" class="headerlink" title="瀑布流"></a>瀑布流</h1><h2 id="什么是瀑布流"><a href="#什么是瀑布流" class="headerlink" title="什么是瀑布流"></a>什么是瀑布流</h2><p>瀑布流，又称瀑布流式布局。是比较流行的一种网站页面布局，视觉表现为参差不齐的多栏布局，随着页面滚动条向下滚动，这种布局还会不断加载数据块并附加至当前尾部。</p><p><img src="https://cdn.jsdelivr.net/gh/limoam/blog.img/layout/202309161701954.png" alt="image-20210729113939747"></p><h2 id="制作思路"><a href="#制作思路" class="headerlink" title="制作思路"></a>制作思路</h2><p>首先第一步，我们仔细观察上面的瀑布流图片，你会发现他们都是定宽不定高的。</p><p>既然定宽，那么一共显示几列，我们也就能够计算出来。如下图所示：</p><p><img src="https://cdn.jsdelivr.net/gh/limoam/blog.img/layout/202309161701782.png" alt="image-20210729132058407"></p><p>列数出来之后，我们拿一个数组来保存一行的高度。什么意思？看下图：</p><p>我们按照 4 列来算，一开始一张图片都没有放，每一列的高度都为 0，所以数组里面是 4 个 0</p><p><img src="https://cdn.jsdelivr.net/gh/limoam/blog.img/layout/202309161701770.png" alt="image-20210729132605594"></p><p>接下来放入第一张图片，找数组里面最小的，目前都是 0，就放在第一列，放完之后需要更新数组里面的最小值</p><p><img src="https://cdn.jsdelivr.net/gh/limoam/blog.img/layout/202309161701821.png" alt="image-20210729132846593"></p><p>然后依此类推，找数组最小的，会找到第二个 0，往第二列放入图片，更新数组，找到第三个 0，往第三列放入图片，更新数组…</p><p><img src="https://cdn.jsdelivr.net/gh/limoam/blog.img/layout/202309161701575.png" alt="image-20210729133210534"></p><p>目前第一行满了，该放在第二行了，但是放在第二行的第几列呢？</p><p>实际上和上面的算法是一样的，找数组的最小值即可，哪个最小就放在哪一列，放完之后更新数组</p><p><img src="https://cdn.jsdelivr.net/gh/limoam/blog.img/layout/202309161701406.png" alt="image-20210729134002131"></p><p>新的高度的计算公式：</p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs js">这一列新的高度 = 这一列高度（数组里面存储的有） + 间隙 + 新的图片高度<br></code></pre></td></tr></table></figure><p>然而这只是计算了 top 值，还有 left 值我们需要计算。每张图片的 left 值只和该图片所在的列有关。</p><p><img src="https://cdn.jsdelivr.net/gh/limoam/blog.img/layout/202309161701279.png" alt="image-20210729135724717"></p><h2 id="函数防抖"><a href="#函数防抖" class="headerlink" title="函数防抖"></a>函数防抖</h2><p>目前为止，图片已经按照瀑布流的形式布局出来了。但是当我们改变窗体大小的时候，图片是要重新进行布局的。</p><p>这就涉及到了要监听 widnow 的 resize 事件，每当此事件触发时，就需要重新排列。</p><p>重新排列倒是很简单，只需要把前面的制作思路封装成一个函数，重新调用这个函数即可。但是这里涉及到一个函数发抖的知识。</p><p>具体的代码片段如下：</p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">var</span> timeId = <span class="hljs-literal">null</span>; <span class="hljs-comment">// 一个计时器的 id</span><br><span class="hljs-comment">// 主要就是绑定窗口尺寸改变的监听事件</span><br><span class="hljs-variable language_">window</span>.<span class="hljs-property">onresize</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)&#123;<br>  <span class="hljs-keyword">if</span>(timeId)&#123;<br>    <span class="hljs-built_in">clearTimeout</span>(timeId);<br>  &#125;<br>  timeId = <span class="hljs-built_in">setTimeout</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)&#123;<br>    <span class="hljs-title function_">setPositions</span>(); <span class="hljs-comment">// 重新排列</span><br>  &#125;, <span class="hljs-number">500</span>);<br>&#125;<br></code></pre></td></tr></table></figure><p>-<em>EOF</em>-</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>JavaScript</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>网络基础原理</title>
     <link href="/limoam/post/f3f5eef3.html"/>
     <url>/limoam/post/f3f5eef3.html</url>
@@ -128,11 +147,11 @@
       
       <tag>CSS</tag>
       
-      <tag>浏览器</tag>
-      
       <tag>HTML</tag>
       
       <tag>JavaScript</tag>
+      
+      <tag>浏览器</tag>
       
     </tags>
     
@@ -157,9 +176,9 @@
     
     <tags>
       
-      <tag>浏览器</tag>
-      
       <tag>JavaScript</tag>
+      
+      <tag>浏览器</tag>
       
     </tags>
     
@@ -186,9 +205,9 @@
       
       <tag>CSS</tag>
       
-      <tag>浏览器</tag>
-      
       <tag>HTML</tag>
+      
+      <tag>浏览器</tag>
       
     </tags>
     
